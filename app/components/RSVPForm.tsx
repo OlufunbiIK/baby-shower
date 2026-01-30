@@ -4,6 +4,17 @@ import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, CheckCircle, Heart, Sparkles, Baby, Users, Mail, Phone, MessageCircle, UtensilsCrossed } from "lucide-react";
 
+type RSVPFormData = {
+  name: string;
+  email: string;
+  phone?: string;
+  attendance: string;
+  guests?: string;
+  dietary?: string;
+  message?: string;
+};
+
+
 export default function RSVPForm() {
   const {
     register,
@@ -12,7 +23,7 @@ export default function RSVPForm() {
     formState: { errors },
     reset,
     watch,
-  } = useForm({
+  } =  useForm<RSVPFormData>({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
   });
@@ -35,7 +46,7 @@ export default function RSVPForm() {
     message: "entry.2115061428"
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: RSVPFormData) => {
     // ⛔ HARD STOP: prevent auto-submit before step 3
     if (currentStep !== 3) return;
   
@@ -216,10 +227,13 @@ export default function RSVPForm() {
     if (
       e.key === "Enter" &&
       currentStep !== 3 &&
+      e.target instanceof HTMLElement &&
       e.target.tagName !== "TEXTAREA"
     ) {
       e.preventDefault();
+
     }
+    
   }}
   
   className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-2xl border-2 border-white/60"
@@ -395,7 +409,7 @@ export default function RSVPForm() {
                         </label>
                         <textarea
                           {...register("dietary")}
-                          rows="3"
+                         rows={3}
                           className="w-full px-5 py-4 rounded-2xl border-2 border-gray-200 focus:border-rose-pink focus:ring-4 focus:ring-rose-pink/20 focus:outline-none transition-all resize-none bg-white/50"
                           placeholder="Any allergies or dietary preferences we should know about?"
                         />
@@ -424,7 +438,7 @@ export default function RSVPForm() {
                         </label>
                         <textarea
                           {...register("message")}
-                          rows="6"
+                        rows={6}
                           className="w-full px-5 py-4 rounded-2xl border-2 border-gray-200 focus:border-lavender focus:ring-4 focus:ring-lavender/20 focus:outline-none transition-all resize-none bg-white/50 text-lg"
                           placeholder="Share your congratulations, advice, or well wishes for the new arrival... ✨"
                         />
