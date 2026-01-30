@@ -7,7 +7,7 @@ export default function FloralBackground() {
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
       {/* Top left corner flower */}
       <svg
-        className="absolute -top-20 -left-20 w-80 h-80 text-forest-green/15"
+        className="absolute -top-20 -left-20 w-80 h-80 text-forest-green/8"
         viewBox="0 0 200 200"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -15,11 +15,11 @@ export default function FloralBackground() {
         {/* Large blooming flower */}
         <g className="animate-[bloom_20s_ease-in-out_infinite]">
           {/* Petals */}
-          <ellipse cx="100" cy="60" rx="25" ry="40" fill="currentColor" opacity="0.8" />
-          <ellipse cx="140" cy="100" rx="25" ry="40" fill="currentColor" opacity="0.7" transform="rotate(72 100 100)" />
-          <ellipse cx="125" cy="150" rx="25" ry="40" fill="currentColor" opacity="0.9" transform="rotate(144 100 100)" />
-          <ellipse cx="75" cy="150" rx="25" ry="40" fill="currentColor" opacity="0.7" transform="rotate(216 100 100)" />
-          <ellipse cx="60" cy="100" rx="25" ry="40" fill="currentColor" opacity="0.8" transform="rotate(288 100 100)" />
+          <ellipse cx="100" cy="60" rx="25" ry="40" fill="currentColor" opacity="0.4" />
+          <ellipse cx="140" cy="100" rx="25" ry="40" fill="currentColor" opacity="0.2" transform="rotate(72 100 100)" />
+          <ellipse cx="125" cy="150" rx="25" ry="40" fill="currentColor" opacity="0.5" transform="rotate(144 100 100)" />
+          <ellipse cx="75" cy="150" rx="25" ry="40" fill="currentColor" opacity="0.3" transform="rotate(216 100 100)" />
+          <ellipse cx="60" cy="100" rx="25" ry="40" fill="currentColor" opacity="0.4" transform="rotate(288 100 100)" />
           {/* Center */}
           <circle cx="100" cy="100" r="15" className="fill-golden-yellow/40" />
         </g>
@@ -27,7 +27,7 @@ export default function FloralBackground() {
 
       {/* Top right golden accent flower */}
       <svg
-        className="absolute top-32 -right-16 w-64 h-64 text-golden-yellow/20"
+        className="absolute top-32 -right-16 w-64 h-64 text-golden-yellow/10"
         viewBox="0 0 200 200"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +45,7 @@ export default function FloralBackground() {
 
       {/* Middle left decorative flower */}
       <svg
-        className="absolute top-1/2 -left-24 w-96 h-96 text-forest-green/12"
+        className="absolute top-1/2 -left-24 w-96 h-96 text-forest-green/6"
         viewBox="0 0 200 200"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -105,7 +105,7 @@ export default function FloralBackground() {
 
       {/* Bottom right corner flower cluster */}
       <svg
-        className="absolute -bottom-24 -right-24 w-[500px] h-[500px] text-forest-green/15"
+        className="absolute -bottom-24 -right-24 w-[500px] h-[500px] text-forest-green/8"
         viewBox="0 0 200 200"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +126,7 @@ export default function FloralBackground() {
 
       {/* Smaller accent flowers scattered */}
       <svg
-        className="absolute top-1/4 right-1/4 w-40 h-40 text-golden-yellow/18"
+        className="absolute top-1/4 right-1/4 w-40 h-40 text-golden-yellow/9"
         viewBox="0 0 100 100"
         fill="none"
       >
@@ -140,7 +140,7 @@ export default function FloralBackground() {
       </svg>
 
       <svg
-        className="absolute bottom-1/3 left-1/3 w-48 h-48 text-forest-green/15"
+        className="absolute bottom-1/3 left-1/3 w-48 h-48 text-forest-green/8"
         viewBox="0 0 100 100"
         fill="none"
       >
@@ -157,7 +157,7 @@ export default function FloralBackground() {
 
       {/* Delicate leaves */}
       <svg
-        className="absolute top-1/3 left-1/4 w-32 h-32 text-forest-green/20"
+        className="absolute top-1/3 left-1/4 w-32 h-32 text-forest-green/10"
         viewBox="0 0 100 100"
         fill="none"
       >
@@ -175,7 +175,7 @@ export default function FloralBackground() {
       </svg>
 
       <svg
-        className="absolute bottom-1/4 right-1/3 w-36 h-36 text-golden-yellow/18"
+        className="absolute bottom-1/4 right-1/3 w-36 h-36 text-golden-yellow/9"
         viewBox="0 0 100 100"
         fill="none"
       >

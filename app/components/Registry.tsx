@@ -193,17 +193,12 @@ export default function Registry() {
                   
                   {/* QR Code icon or image placeholder */}
                   <div className="relative z-10 flex flex-col items-center gap-3">
-                    <motion.div
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      <QrCode className="w-16 h-16 text-gray-300" />
-                    </motion.div>
+                  
                     <p className="text-xs text-gray-400 font-medium">
                       QR Code
                     </p>
                     {/* Replace this with your actual QR code image */}
-                    {/* <img src="/qr-code.png" alt="Registry QR Code" className="w-full h-full object-contain rounded-xl" /> */}
+                    <img src="/frame.png" alt="Registry QR Code" className="w-full h-full object-contain rounded-xl" />
                   </div>
                 </div>
               </div>
