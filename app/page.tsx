@@ -81,7 +81,7 @@ export default function Home() {
         </section> */}
 
         {/* Full Dashboard (only shown when authenticated) */}
-        {isAdminAuthenticated && <AttendeesDashboard isAuthenticated={isAdminAuthenticated} />}
+        {isAdminAuthenticated && <AttendeesDashboard />}
         
         <Registry />
         <Footer />
