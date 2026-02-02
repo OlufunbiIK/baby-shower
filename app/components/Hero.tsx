@@ -125,7 +125,8 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.9 }}
               className="space-y-4"
-            >
+            ><h1 className="font-playfair font-semibold text-forest-green block mt-2">Shhhh 🤫  Don't Tell Anyone!</h1>
+
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-playfair text-forest-green leading-[1.1] tracking-tight">
                 A Little One
                 <br />
