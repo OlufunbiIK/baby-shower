@@ -1,6 +1,6 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, UserCheck, UserX, HelpCircle, Heart, Lock, X } from "lucide-react";
+import { Users, Lock, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface Attendee {
@@ -10,7 +10,11 @@ interface Attendee {
   message?: string;
 }
 
-export default function AttendeesShowcase() {
+export default function GuestShowcase() {
+  type GuestTab = "all" | "going" | "maybe" | "cant-go";
+
+const [activeTab, setActiveTab] = useState<GuestTab>("all");
+
   const [attendees, setAttendees] = useState<Attendee[]>([]);
   const [loading, setLoading] = useState(true);
   const [showGuestList, setShowGuestList] = useState(false);
@@ -23,55 +27,140 @@ export default function AttendeesShowcase() {
   const SHEET_ID = "1214079262";
   const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${SHEET_ID}`;
 
-  async function fetchGuestData() {
-    // Same function as in AttendeesShowcase
-    const CORS_PROXY = "https://api.allorigins.win/raw?url=";
-    const encodedUrl = encodeURIComponent(SHEET_CSV_URL);
-    const proxyUrl = `${CORS_PROXY}${encodedUrl}`;
-    
-    const response = await fetch(proxyUrl);
-    const csvText = await response.text();
-    
-    const rows = csvText.split('\n').map(row => 
-      row.split(',').map(cell => cell.replace(/^"|"$/g, ''))
-    );
-    
-    const [headers, ...dataRows] = rows;
-    
-    return dataRows
-      .filter(row => row[1])
-      .map(row => {
-        let attendanceStatus = "cant-go";
-        if (row[3]?.includes("Yes, I'll be there")) attendanceStatus = "going";
-        else if (row[3]?.includes("Maybe")) attendanceStatus = "maybe";
-        
-        return {
-          name: row[1] || "Anonymous",
-          email: row[2],
-          attendance: attendanceStatus,
-          message: row[4] || "",
-          guests: parseInt(row[5]) || 1,
-        };
-      });
-  }
 
-// ADD THIS useEffect RIGHT HERE
-useEffect(() => {
-    async function loadGuests() {
-      console.log("🔄 Loading guests...");
-      setLoading(true);
-      const data = await fetchGuestData();
-      console.log("📊 Fetched data:", data);
-      console.log("📊 Number of attendees:", data.length);
-      setAttendees(data);
-      setLoading(false);
+
+ async function fetchGuestData(): Promise<Attendee[]> {
+  try {
+    // Try multiple CORS proxies in order
+    const CORS_PROXIES = [
+      "",  // Try direct first (if sheet is public)
+      "https://corsproxy.io/?",
+      "https://api.codetabs.com/v1/proxy?quest=",
+      "https://api.allorigins.win/raw?url=",
+    ];
+    
+    let csvText = "";
+    let fetchSuccess = false;
+    
+    for (const proxy of CORS_PROXIES) {
+      try {
+        const url = proxy ? `${proxy}${encodeURIComponent(SHEET_CSV_URL)}` : SHEET_CSV_URL;
+        console.log(`Attempting fetch with ${proxy || 'direct connection'}:`, url);
+        
+        const response = await fetch(url, {
+          headers: {
+            'Accept': 'text/csv,text/plain,*/*',
+          },
+          cache: 'no-store'
+        });
+        
+        if (response.ok) {
+          csvText = await response.text();
+          console.log("✅ Fetch successful with", proxy || "direct connection");
+          console.log("Raw CSV preview:", csvText.slice(0, 200));
+          fetchSuccess = true;
+          break;
+        }
+      } catch (proxyError) {
+        console.log(`Failed with ${proxy || 'direct'}, trying next...`);
+        continue;
+      }
     }
     
-    loadGuests();
+    if (!fetchSuccess) {
+      console.error("All fetch methods failed");
+      return [];
+    }
+
+    // Split CSV rows safely
+    function parseCSV(text: string): string[][] {
+      const rows: string[][] = [];
+      let currentRow: string[] = [];
+      let currentCell = "";
+      let insideQuotes = false;
     
-    const interval = setInterval(loadGuests, 30000);
-    return () => clearInterval(interval);
-  }, []);
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+    
+        if (char === '"') {
+          insideQuotes = !insideQuotes;
+        } else if (char === "," && !insideQuotes) {
+          currentRow.push(currentCell.trim());
+          currentCell = "";
+        } else if (char === "\n" && !insideQuotes) {
+          currentRow.push(currentCell.trim());
+          rows.push(currentRow.map(c => c.replace(/^"|"$/g, "")));
+          currentRow = [];
+          currentCell = "";
+        } else {
+          currentCell += char;
+        }
+      }
+    
+      return rows.filter(r => r.length > 1);
+    }
+    const rows = parseCSV(csvText);
+    
+
+    const [headers, ...dataRows] = rows;
+
+    // Map header → index (lowercased for safety)
+    const headerIndex: Record<string, number> = {};
+    headers.forEach((header, index) => {
+      headerIndex[header.toLowerCase()] = index;
+    });
+
+    console.log("Header index map:", headerIndex);
+    console.log("First data row:", dataRows[0]);
+
+    return dataRows
+      .filter(row => row[headerIndex["name"]])
+      .map(row => {
+        const attendanceText = row[headerIndex["attendance"]] || "";
+
+
+        let attendance: "going" | "maybe" | "cant-go" = "cant-go";
+
+        if (/yes|going|there/i.test(attendanceText)) {
+          attendance = "going";
+        } else if (/maybe/i.test(attendanceText)) {
+          attendance = "maybe";
+        }
+
+        return {
+          name: row[headerIndex["name"]] || "Anonymous",
+          attendance,
+          guests: parseInt(row[headerIndex["number of guests"]]) || 1,
+          message: row[headerIndex["message"]] || "",
+        };
+      });
+  } catch (error) {
+    console.error("Error fetching guest data:", error);
+    return [];
+  }
+}
+
+      
+      // ADD THIS useEffect RIGHT HERE:
+      useEffect(() => {
+        async function loadGuests() {
+          console.log("🔄 Loading guests from:", SHEET_CSV_URL);
+          setLoading(true);
+          
+          const data = await fetchGuestData();
+          console.log("📊 Fetched data:", data);
+          console.log("📊 Number of attendees:", data.length);
+          
+          setAttendees(data);
+          setLoading(false);
+        }
+        
+        loadGuests();
+        
+        // Auto-refresh every 30 seconds
+        const interval = setInterval(loadGuests, 200000);
+        return () => clearInterval(interval);
+      }, []);
 
   const handleLogin = () => {
     if (ADMIN_PASSWORDS.includes(password)) {
@@ -83,15 +172,17 @@ useEffect(() => {
     }
   };
 
-  // Calculate stats
   const stats = {
-    attending: attendees.filter(a => a.attendance === "going").length,
-    totalGuests: attendees
-      .filter(a => a.attendance === "going")
-      .reduce((sum, a) => sum + a.guests, 0),
+    going: attendees.filter(a => a.attendance === "going").length,
     maybe: attendees.filter(a => a.attendance === "maybe").length,
-    notAttending: attendees.filter(a => a.attendance === "cant-go").length,
+    cantGo: attendees.filter(a => a.attendance === "cant-go").length,
+    total: attendees.length,
   };
+  const filteredGuests = attendees.filter(attendee => {
+    if (activeTab === "all") return true;
+    return attendee.attendance === activeTab;
+  });
+  
 
   const getInitials = (name: string) => {
     return name
@@ -102,171 +193,88 @@ useEffect(() => {
       .slice(0, 2);
   };
 
+  const guestGradients = [
+    "from-rose-400 to-pink-500",
+    "from-amber-400 to-orange-500",
+    "from-emerald-400 to-teal-500",
+    "from-sky-400 to-blue-500",
+    "from-violet-400 to-purple-500",
+    "from-fuchsia-400 to-pink-600",
+    "from-lime-400 to-green-500",
+    "from-cyan-400 to-sky-500",
+  ];
+  
+
   const getAvatarColor = (attendance: string) => {
     if (attendance === "going") return "from-green-400 to-emerald-500";
     if (attendance === "maybe") return "from-amber-400 to-yellow-500";
     return "from-gray-400 to-gray-500";
   };
 
-  const attendingGuests = attendees.filter(a => a.attendance === "going");
-  const displayLimit = 12;
+  const getGuestGradient = (index: number) =>
+    guestGradients[index % guestGradients.length];
+  
+
+  const attendingGuests = attendees;
+
+  
+  const displayLimit = 8;
   const hasMore = attendingGuests.length > displayLimit;
 
   if (loading) {
     return (
-      <section className="py-16 px-4 bg-gradient-to-br from-emerald-50/30 via-amber-50/20 to-rose-50/30">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-48 mx-auto"></div>
+      <div className="w-full lg:w-130 flex-shrink-0">
+        <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-xl border-2 border-white/80">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-200 rounded"></div>
+            <div className="h-32 bg-gray-200 rounded"></div>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-br from-emerald-50/30 via-amber-50/20 to-rose-50/30 relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute inset-0 pointer-events-none opacity-30">
-        <div className="absolute top-10 right-20 w-64 h-64 bg-forest-green/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 left-20 w-72 h-72 bg-golden-yellow/8 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="max-w-6xl mx-auto relative z-10">
-        {/* Header */}
+    <>
+      {/* Guest Showcase Card */}
+      <div className="w-full lg:w-130 flex-shrink-0">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="bg-white/60 backdrop-blur-sm p-8 shadow-xl border-2 border-white/80 sticky top-8"
         >
-          <motion.div
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            transition={{ type: "spring", delay: 0.2 }}
-            className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-forest-green/10 to-golden-yellow/10 rounded-full mb-4"
-          >
-            <Users className="w-8 h-8 text-forest-green" />
-          </motion.div>
-          
-          <h2 className="text-4xl md:text-5xl font-playfair text-forest-green mb-3 tracking-tight">
-            Join the Celebration
-          </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-rose-pink via-golden-yellow to-lavender mx-auto mb-4 rounded-full"></div>
-          <p className="text-gray-600 text-lg">
-            See who's celebrating with us!
-          </p>
-        </motion.div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-            className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200 shadow-md hover:shadow-lg transition-all"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <UserCheck className="w-5 h-5 text-green-600" />
-              <p className="text-sm font-semibold text-green-700 uppercase tracking-wide">Attending</p>
-            </div>
-            <p className="text-4xl font-bold text-green-600">{stats.attending}</p>
-            <p className="text-xs text-green-600/70 mt-1">{stats.totalGuests} guests total</p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-            className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl p-6 border-2 border-amber-200 shadow-md hover:shadow-lg transition-all"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <HelpCircle className="w-5 h-5 text-amber-600" />
-              <p className="text-sm font-semibold text-amber-700 uppercase tracking-wide">Maybe</p>
-            </div>
-            <p className="text-4xl font-bold text-amber-600">{stats.maybe}</p>
-            <p className="text-xs text-amber-600/70 mt-1">Confirming soon</p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-            className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl p-6 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <UserX className="w-5 h-5 text-gray-600" />
-              <p className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Unable</p>
-            </div>
-            <p className="text-4xl font-bold text-gray-600">{stats.notAttending}</p>
-            <p className="text-xs text-gray-600/70 mt-1">Can't make it</p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-            className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-6 border-2 border-rose-200 shadow-md hover:shadow-lg transition-all"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <Heart className="w-5 h-5 text-rose-600 fill-current" />
-              <p className="text-sm font-semibold text-rose-700 uppercase tracking-wide">Total</p>
-            </div>
-            <p className="text-4xl font-bold text-rose-600">{attendees.length}</p>
-            <p className="text-xs text-rose-600/70 mt-1">RSVPs received</p>
-          </motion.div>
-        </div>
-
-        {/* Attendee Avatars Preview */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-xl border-2 border-white/80"
-        >
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-2xl font-playfair text-forest-green">
-              Celebrating With Us ✨
-            </h3>
-            <button
-              onClick={() => setShowGuestList(true)}
-              className="px-6 py-2 bg-forest-green hover:bg-forest-green/90 text-white rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
-            >
-              View All
-            </button>
+          <div className="flex items-center gap-3 mb-6">
+            <Users className="w-6 h-6 text-forest-green" />
+            <h3 className="text-2xl font-playfair text-forest-green">Celebrating With Us</h3>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4 mb-6">
+          <div className="text-center mb-6">
+            <p className="text-4xl font-bold text-forest-green mb-1">{stats.going}</p>
+            <p className="text-sm text-gray-600">people attending</p>
+            <p className="text-xs text-gray-500 mt-1">{stats.total} guests total</p>
+          </div>
+
+          {/* Avatar Grid */}
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
             {attendingGuests.slice(0, displayLimit).map((attendee, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, scale: 0 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.6 + index * 0.05 }}
-                whileHover={{ scale: 1.15, y: -8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ scale: 1.1, y: -4 }}
                 className="group relative"
               >
-                <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${getAvatarColor(attendee.attendance)} flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:shadow-xl transition-all`}>
+                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${getGuestGradient(index)} flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:shadow-lg transition-all`}>
                   {getInitials(attendee.name)}
                 </div>
                 
-                {/* Tooltip on hover */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                {/* Tooltip */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                   <div className="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl">
                     <p className="font-semibold">{attendee.name}</p>
                     <p className="text-gray-300 text-[10px]">{attendee.guests} guest{attendee.guests > 1 ? 's' : ''}</p>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-900"></div>
                   </div>
                 </div>
               </motion.div>
@@ -275,26 +283,25 @@ useEffect(() => {
             {hasMore && (
               <motion.div
                 initial={{ opacity: 0, scale: 0 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.6 + displayLimit * 0.05 }}
-                className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-700 font-bold text-sm shadow-lg cursor-pointer"
-                onClick={() => setShowGuestList(true)}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: displayLimit * 0.05 }}
+                className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-700 font-bold text-xs shadow-md"
               >
                 +{attendingGuests.length - displayLimit}
               </motion.div>
             )}
           </div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 1 }}
-            className="text-center text-gray-500 text-sm"
+          <button
+            onClick={() => setShowGuestList(true)}
+            className="w-full bg-gradient-to-r from-forest-green to-emerald-600 hover:from-forest-green/90 hover:to-emerald-600/90 text-white font-semibold py-3 transition-all shadow-md hover:shadow-lg"
           >
-            {stats.totalGuests} wonderful {stats.totalGuests === 1 ? 'guest' : 'guests'} joining the celebration! 🎉
-          </motion.p>
+            View Full Guest List
+          </button>
+
+          <p className="text-center text-gray-500 text-xs mt-4">
+            ✨ {stats.going} guests joining the celebration!
+          </p>
         </motion.div>
       </div>
 
@@ -392,17 +399,55 @@ useEffect(() => {
                   <div>
                     {/* Tabs */}
                     <div className="flex gap-2 mb-6 border-b border-gray-200">
-                      <button className="px-6 py-3 font-semibold text-forest-green border-b-2 border-forest-green">
-                        Going ({stats.attending})
-                      </button>
-                      <button className="px-6 py-3 font-semibold text-gray-500 hover:text-gray-700 transition-colors">
-                        Maybe ({stats.maybe})
-                      </button>
-                    </div>
+  <button
+    onClick={() => setActiveTab("all")}
+    className={`px-6 py-3 font-semibold transition-colors ${
+      activeTab === "all"
+        ? "text-forest-green border-b-2 border-forest-green"
+        : "text-gray-500 hover:text-gray-700"
+    }`}
+  >
+    All ({stats.total})
+  </button>
+
+  <button
+    onClick={() => setActiveTab("going")}
+    className={`px-6 py-3 font-semibold transition-colors ${
+      activeTab === "going"
+        ? "text-forest-green border-b-2 border-forest-green"
+        : "text-gray-500 hover:text-gray-700"
+    }`}
+  >
+    Going ({stats.going})
+  </button>
+
+  <button
+    onClick={() => setActiveTab("maybe")}
+    className={`px-6 py-3 font-semibold transition-colors ${
+      activeTab === "maybe"
+        ? "text-amber-600 border-b-2 border-amber-500"
+        : "text-gray-500 hover:text-gray-700"
+    }`}
+  >
+    Maybe ({stats.maybe})
+  </button>
+
+  <button
+    onClick={() => setActiveTab("cant-go")}
+    className={`px-6 py-3 font-semibold transition-colors ${
+      activeTab === "cant-go"
+        ? "text-gray-700 border-b-2 border-gray-400"
+        : "text-gray-500 hover:text-gray-700"
+    }`}
+  >
+    Can't Make It ({stats.cantGo})
+  </button>
+</div>
+
 
                     {/* Guest Cards */}
                     <div className="space-y-3">
-                      {attendingGuests.map((attendee, index) => (
+                    {filteredGuests.map((attendee, index) => (
                         <motion.div
                           key={index}
                           initial={{ opacity: 0, x: -20 }}
@@ -415,9 +460,8 @@ useEffect(() => {
                           </div>
                           <div className="flex-1">
                             <p className="font-semibold text-gray-800">{attendee.name}</p>
-                            <p className="text-sm text-gray-600">
-                              {attendee.guests} {attendee.guests === 1 ? 'guest' : 'guests'}
-                            </p>
+        
+
                           </div>
                           {attendee.message && (
                             <div className="text-xs text-gray-500 italic max-w-xs">
@@ -434,6 +478,6 @@ useEffect(() => {
           </motion.div>
         )}
       </AnimatePresence>
-    </section>
+    </>
   );
 }

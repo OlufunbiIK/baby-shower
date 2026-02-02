@@ -28,7 +28,9 @@ interface RSVPEntry {
   message: string;
 }
 
-export default function AttendeesDashboard({ isAuthenticated }: { isAuthenticated: boolean }) {
+export default function AttendeesDashboard() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [rsvpData, setRsvpData] = useState<RSVPEntry[]>([]);
@@ -76,16 +78,19 @@ export default function AttendeesDashboard({ isAuthenticated }: { isAuthenticate
       
       const [headers, ...dataRows] = rows;
       
-      const processedData = dataRows
-        .filter(row => row[1]) // Filter out empty rows
-        .map(row => ({
-          timestamp: row[0] || "",
-          name: row[1] || "Anonymous",
-          email: row[2] || "",
-          attendance: row[3] || "",
-          guests: parseInt(row[5]) || 1,
-          message: row[4] || ""
-        }));
+      const processedData: RSVPEntry[] = dataRows
+      .filter(row => row[1])
+      .map(row => ({
+        timestamp: row[0] || "",
+        name: row[1] || "Anonymous",
+        email: row[2] || "",
+        phone: row[6] || "",        // 👈 add
+        attendance: row[3] || "",
+        guests: parseInt(row[5]) || 1,
+        dietary: row[7] || "",      // 👈 add
+        message: row[4] || ""
+      }));
+    
       
       console.log("✅ Loaded RSVPs:", processedData.length);
       setRsvpData(processedData);

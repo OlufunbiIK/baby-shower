@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { Download, Share2, Heart, Lock, Users, CheckCircle, XCircle, HelpCircle } from "lucide-react";
+import { Download, Share2, Heart, Lock } from "lucide-react";
 
 export default function InvitationCard() {
 
@@ -60,16 +60,7 @@ export default function InvitationCard() {
             <h2 className="text-4xl md:text-5xl font-playfair text-forest-green tracking-tight">
               Digital Invitation
             </h2>
-            {/* Admin access button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowAdminPanel(!showAdminPanel)}
-              className="p-2 rounded-full bg-forest-green/10 hover:bg-forest-green/20 transition-colors"
-              title="Admin RSVP View"
-            >
-              <Lock className="w-5 h-5 text-forest-green" />
-            </motion.button>
+         
           </div>
           <div className="w-16 h-0.5 bg-gradient-to-r from-rose-pink via-golden-yellow to-lavender mx-auto mb-6"></div>
           <p className="text-gray-600 text-lg font-medium">Save or share this beautiful invitation</p>
