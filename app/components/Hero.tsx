@@ -125,7 +125,7 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.9 }}
               className="space-y-4"
-            ><h1 className="font-playfair font-semibold text-forest-green block mt-2">Shhhh 🤫  Don't Tell Anyone!</h1>
+            ><h1 className="font-playfair font-semibold text-forest-green block mt-2">Shhhh 🤫  Don't Tell Anyone Yet!</h1>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-playfair text-forest-green leading-[1.1] tracking-tight">
                 A Little One
@@ -163,7 +163,7 @@ export default function Hero() {
               className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-6"
             >
               {[
-                { icon: Calendar, label: "Date", value: "Mar 14th, 2026", color: "from-forest-green/10 to-emerald-100/40" },
+                { icon: Calendar, label: "Date", value: "Saturday, March 14th, 2026", color: "from-forest-green/10 to-emerald-100/40" },
                 { icon: Clock, label: "Time", value: "3 PM - 7 PM", color: "from-golden-yellow/10 to-amber-100/40" },
                 { icon: MapPin, label: "Venue", value: "2429 pebble bank ln Midlothian tx 76065", color: "from-forest-green/10 to-green-100/40" },
               ].map((item, i) => (
