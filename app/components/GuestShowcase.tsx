@@ -29,75 +29,67 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
 
 
 
- async function fetchGuestData(): Promise<Attendee[]> {
-  try {
-    const CORS_PROXY = "https://api.allorigins.win/raw?url=";
-    const encodedUrl = encodeURIComponent(SHEET_CSV_URL);
-    const proxyUrl = `${CORS_PROXY}${encodedUrl}&_=${Date.now()}`;
-
-
-    console.log("Fetching from:", proxyUrl);
-
-    const response = await fetch(proxyUrl);
-    const csvText = await response.text();
-
-    console.log("Raw CSV preview:", csvText.slice(0, 200));
-
-    // Split CSV rows safely
-    function parseCSV(text: string): string[][] {
-      const rows: string[][] = [];
-      let currentRow: string[] = [];
-      let currentCell = "";
-      let insideQuotes = false;
-    
-      for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-    
-        if (char === '"') {
-          insideQuotes = !insideQuotes;
-        } else if (char === "," && !insideQuotes) {
-          currentRow.push(currentCell.trim());
-          currentCell = "";
-        } else if (char === "\n" && !insideQuotes) {
+  async function fetchGuestData(): Promise<Attendee[]> {
+    try {
+      const response = await fetch("/api/guests", {
+        cache: "no-store",
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch guests");
+      }
+  
+      const csvText = await response.text();
+      function parseCSV(text: string): string[][] {
+        const rows: string[][] = [];
+        let currentRow: string[] = [];
+        let currentCell = "";
+        let insideQuotes = false;
+      
+        for (let i = 0; i < text.length; i++) {
+          const char = text[i];
+      
+          if (char === '"') {
+            insideQuotes = !insideQuotes;
+          } else if (char === "," && !insideQuotes) {
+            currentRow.push(currentCell.trim());
+            currentCell = "";
+          } else if (char === "\n" && !insideQuotes) {
+            currentRow.push(currentCell.trim());
+            rows.push(currentRow.map(c => c.replace(/^"|"$/g, "")));
+            currentRow = [];
+            currentCell = "";
+          } else {
+            currentCell += char;
+          }
+        }
+      
+        // 🔥🔥🔥 THIS IS THE MISSING PIECE 🔥🔥🔥
+        if (currentCell.length > 0 || currentRow.length > 0) {
           currentRow.push(currentCell.trim());
           rows.push(currentRow.map(c => c.replace(/^"|"$/g, "")));
-          currentRow = [];
-          currentCell = "";
-        } else {
-          currentCell += char;
         }
+      
+        return rows.filter(r => r.length > 1);
       }
-    
-      return rows.filter(r => r.length > 1);
-    }
-    const rows = parseCSV(csvText);
-    
-
-    const [headers, ...dataRows] = rows;
-
-    // Map header → index (lowercased for safety)
-    const headerIndex: Record<string, number> = {};
-    headers.forEach((header, index) => {
-      headerIndex[header.toLowerCase()] = index;
-    });
-
-    console.log("Header index map:", headerIndex);
-    console.log("First data row:", dataRows[0]);
-
-    return dataRows
-      .filter(row => row[headerIndex["name"]])
-      .map(row => {
+      
+  
+      const rows = parseCSV(csvText);
+      const [headers, ...dataRows] = rows;
+  
+      const headerIndex: Record<string, number> = {};
+      headers.forEach((h, i) => {
+        headerIndex[h.toLowerCase().trim()] = i;
+      });
+  
+      return dataRows.map(row => {
         const attendanceText = row[headerIndex["attendance"]] || "";
-
-
+  
         let attendance: "going" | "maybe" | "cant-go" = "cant-go";
-
-        if (/yes|going|there/i.test(attendanceText)) {
-          attendance = "going";
-        } else if (/maybe/i.test(attendanceText)) {
-          attendance = "maybe";
-        }
-
+  
+        if (/yes|there/i.test(attendanceText)) attendance = "going";
+        else if (/maybe/i.test(attendanceText)) attendance = "maybe";
+  
         return {
           name: row[headerIndex["name"]] || "Anonymous",
           attendance,
@@ -105,11 +97,12 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
           message: row[headerIndex["message"]] || "",
         };
       });
-  } catch (error) {
-    console.error("Error fetching guest data:", error);
-    return [];
+    } catch (err) {
+      console.error("Guest fetch failed:", err);
+      return [];
+    }
   }
-}
+  
 
       
       // ADD THIS useEffect RIGHT HERE:

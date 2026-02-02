@@ -12,24 +12,24 @@ export default function Registry() {
       color: "from-orange-500 to-amber-500",
       hoverColor: "hover:from-orange-600 hover:to-amber-600",
     },
-    {
-      name: "Target Registry",
-      icon: Gift,
-      description: "Additional items we love",
-      url: "https://www.target.com/gift-registry/your-link",
-      color: "from-red-500 to-rose-500",
-      hoverColor: "hover:from-red-600 hover:to-rose-600",
-    },
-    {
-      name: "Baby Fund Contribution",
-      icon: Heart,
-      description: "For diapers, wipes, and future needs",
-      url: "https://venmo.com/AdebukTheeMom",
-      isVenmo: true,
-      venmoHandle: "@AdebukTheeMom",
-      color: "from-sage-green to-forest-green",
-      hoverColor: "hover:from-forest-green hover:to-sage-green",
-    },
+    // {
+    //   name: "Target Registry",
+    //   icon: Gift,
+    //   description: "Additional items we love",
+    //   url: "https://www.target.com/gift-registry/your-link",
+    //   color: "from-red-500 to-rose-500",
+    //   hoverColor: "hover:from-red-600 hover:to-rose-600",
+    // },
+    // {
+    //   name: "Baby Fund Contribution",
+    //   icon: Heart,
+    //   description: "For diapers, wipes, and future needs",
+    //   url: "https://venmo.com/AdebukTheeMom",
+    //   isVenmo: true,
+    //   venmoHandle: "@AdebukTheeMom",
+    //   color: "from-sage-green to-forest-green",
+    //   hoverColor: "hover:from-forest-green hover:to-sage-green",
+    // },
   ];
 
   return (
@@ -53,7 +53,7 @@ export default function Registry() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="flex flex-col justify-center items-center gap-6">
           {registries.map((registry, index) => {
             const Icon = registry.icon;
             return (
@@ -66,66 +66,50 @@ export default function Registry() {
                 whileHover={{ y: -8, transition: { duration: 0.3 } }}
                 className="group"
               >
-                <div className="glass rounded-2xl p-8 shadow-soft border border-gray-100/50 hover:border-gray-200/50 hover:shadow-elegant transition-all duration-300 h-full flex flex-col">
-                  {/* Icon */}
-                  <motion.div
-                    whileHover={{ scale: 1.15, rotate: 5 }}
-                    className={`bg-gradient-to-br ${registry.color} ${registry.hoverColor} w-16 h-16 rounded-xl flex items-center justify-center mb-6 transition-all duration-300 shadow-lg`}
-                  >
-                    <Icon className="w-7 h-7 text-white" />
-                  </motion.div>
+           <div className="flex justify-center items-center w-[400px] p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.95 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        whileHover={{ y: -8, transition: { duration: 0.3 } }}
+        className="group"
+      >
+        <div className="glass rounded-2xl p-8 shadow-soft border border-gray-100/50 hover:border-gray-200/50 hover:shadow-elegant transition-all duration-300 h-full flex flex-col">
+          
+          {/* Icon */}
+          <motion.div
+            whileHover={{ scale: 1.15, rotate: 5 }}
+            className={`bg-gradient-to-br ${registry.color} ${registry.hoverColor} w-16 h-16 rounded-xl flex items-center justify-center mb-6 transition-all duration-300 shadow-lg`}
+          >
+            <Icon className="w-7 h-7 text-white" />
+          </motion.div>
 
-                  {/* Content */}
-                  <h3 className="text-xl font-playfair text-forest-green mb-3">
-                    {registry.name}
-                  </h3>
-                  <p className="text-gray-600 mb-6 flex-grow leading-relaxed text-sm">
-                    {registry.description}
-                  </p>
+          {/* Content */}
+          <h3 className="text-xl font-playfair text-forest-green mb-3">
+            {registry.name}
+          </h3>
+          <p className="text-gray-600 mb-6 flex-grow leading-relaxed text-sm">
+            {registry.description}
+          </p>
 
-                  {/* Venmo info or button */}
-                  {registry.isVenmo ? (
-                    <div className="space-y-3">
-                      <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Venmo</p>
-                        <p className="text-base font-semibold text-forest-green">
-                          {registry.venmoHandle}
-                        </p>
-                      </div>
-                      <motion.a
-                        whileHover={{ scale: 1.03, y: -2 }}
-                        whileTap={{ scale: 0.98 }}
-                        href={registry.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`block w-full bg-gradient-to-r ${registry.color} ${registry.hoverColor} text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2`}
-                      >
-                        <span>Send Gift</span>
-                        <motion.div
-                          whileHover={{ x: 2, y: -2 }}
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </motion.div>
-                      </motion.a>
-                    </div>
-                  ) : (
-                    <motion.a
-                      whileHover={{ scale: 1.03, y: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      href={registry.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`block w-full bg-gradient-to-r ${registry.color} ${registry.hoverColor} text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2`}
-                    >
-                      <span>Shop Registry</span>
-                      <motion.div
-                        whileHover={{ x: 2, y: -2 }}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </motion.div>
-                    </motion.a>
-                  )}
-                </div>
+          {/* Button */}
+          <motion.a
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            href={registry.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`block w-full bg-gradient-to-r ${registry.color} ${registry.hoverColor} text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2`}
+          >
+            <span>Shop Registry</span>
+            <motion.div whileHover={{ x: 2, y: -2 }}>
+              <ExternalLink className="w-4 h-4" />
+            </motion.div>
+          </motion.a>
+        </div>
+      </motion.div>
+    </div>
               </motion.div>
             );
           })}
@@ -213,7 +197,7 @@ export default function Registry() {
               className="flex items-center justify-center gap-2 text-sm text-gray-600"
             >
               <Smartphone className="w-4 h-4 text-sage-green" />
-              <span>Scan to access all registries on mobile</span>
+              <span>Scan to access registry on mobile</span>
             </motion.div>
 
             {/* Decorative bottom accent */}

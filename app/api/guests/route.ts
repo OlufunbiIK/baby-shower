@@ -1,45 +1,35 @@
 // app/api/guests/route.ts
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 const SPREADSHEET_ID = "15ewgjkz5cgGBJhSxiOjQ98mtPtv7VkkrXBufcj1Z9no";
 const SHEET_ID = "1214079262";
 
 export async function GET() {
   try {
-    const timestamp = new Date().getTime();
-    const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${SHEET_ID}&timestamp=${timestamp}`;
-    
-    console.log("Fetching from:", url);
-    
+    const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${SHEET_ID}`;
+
     const response = await fetch(url, {
-      headers: {
-        'Accept': 'text/csv,text/plain,*/*',
-      },
-      cache: 'no-store'
+      cache: "no-store", // 🔥 THIS is important
     });
 
     if (!response.ok) {
-      console.error("Fetch failed:", response.status, response.statusText);
       return NextResponse.json(
-        { error: 'Failed to fetch data from Google Sheets' },
+        { error: "Failed to fetch Google Sheet" },
         { status: response.status }
       );
     }
 
     const csvText = await response.text();
-    console.log("CSV fetched successfully, length:", csvText.length);
-    
+
     return new NextResponse(csvText, {
-      status: 200,
       headers: {
-        'Content-Type': 'text/csv',
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        "Content-Type": "text/csv",
+        "Cache-Control": "no-store",
       },
     });
-  } catch (error) {
-    console.error("Error in API route:", error);
+  } catch (err) {
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Server error" },
       { status: 500 }
     );
   }
