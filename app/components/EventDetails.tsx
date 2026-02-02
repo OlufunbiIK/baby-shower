@@ -1,12 +1,12 @@
 "use client";
 import { motion } from "framer-motion";
-import { Calendar, Clock, MapPin, Info, Navigation } from "lucide-react";
+import { Calendar, Clock, MapPin, Info, Navigation, ShieldAlert, Coffee, Gift, Camera } from "lucide-react";
 
 export default function EventDetails() {
   // Event location details
   const eventLocation = {
     name: "Venue TBA",
-    address: "Texas, USA - Exact address will be shared closer to the date",
+    address: "2429 pebble bank ln Midlothian tx 76065",
     // Texas, USA coordinates (centered on Texas)
     lat: 31.9686,
     lng: -99.9018,
@@ -18,7 +18,7 @@ export default function EventDetails() {
     {
       icon: Calendar,
       label: "Date",
-      value: "Saturday, March 28th, 2026",
+      value: "Saturday, March 14th, 2026",
       bgClass: "from-forest-green/10 to-emerald-100/40",
       borderClass: "hover:border-forest-green/40",
       iconBgClass: "from-white to-forest-green/20",
@@ -27,7 +27,7 @@ export default function EventDetails() {
     {
       icon: Clock,
       label: "Time",
-      value: "1:30 PM – 4:30 PM",
+      value: "3 PM – 7 PM",
       extra: "CTGMT (Central Time GMT)",
       bgClass: "from-golden-yellow/10 to-amber-100/40",
       borderClass: "hover:border-golden-yellow/40",
@@ -276,7 +276,7 @@ export default function EventDetails() {
                 transition={{ delay: 0.6 }}
                 className="flex items-start gap-4 bg-white/70 backdrop-blur-sm rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-300"
               >
-                <span className="text-2xl mt-0.5">🤫</span>
+            <ShieldAlert className="w-7 h-7 text-rose-pink flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-forest-green mb-1">Surprise Shower!</p>
                   <p className="leading-relaxed text-gray-600">
@@ -292,7 +292,7 @@ export default function EventDetails() {
                 transition={{ delay: 0.7 }}
                 className="flex items-start gap-4 bg-white/70 backdrop-blur-sm rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-300"
               >
-                <span className="text-2xl mt-0.5">🍰</span>
+              <Coffee className="w-7 h-7 text-amber-500 flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-forest-green mb-1">Refreshments Provided</p>
                   <p className="leading-relaxed text-gray-600">
@@ -308,7 +308,7 @@ export default function EventDetails() {
                 transition={{ delay: 0.8 }}
                 className="flex items-start gap-4 bg-white/70 backdrop-blur-sm rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-300"
               >
-                <span className="text-2xl mt-0.5">💝</span>
+              <Gift className="w-7 h-7 text-rose-pink flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-forest-green mb-1">Gifts Welcome</p>
                   <p className="leading-relaxed text-gray-600">
@@ -324,7 +324,7 @@ export default function EventDetails() {
                 transition={{ delay: 0.9 }}
                 className="flex items-start gap-4 bg-white/70 backdrop-blur-sm rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-300"
               >
-                <span className="text-2xl mt-0.5">📸</span>
+              <Camera className="w-7 h-7 text-lavender flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-forest-green mb-1">Photo Opportunities</p>
                   <p className="leading-relaxed text-gray-600">

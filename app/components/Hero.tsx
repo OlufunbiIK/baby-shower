@@ -159,12 +159,12 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.8 }}
-              className="grid grid-cols-3 gap-3 pt-6"
+              className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-6"
             >
               {[
-                { icon: Calendar, label: "Date", value: "Mar 28", color: "from-forest-green/10 to-emerald-100/40" },
-                { icon: Clock, label: "Time", value: "1:30 PM", color: "from-golden-yellow/10 to-amber-100/40" },
-                { icon: MapPin, label: "Venue", value: "TBA", color: "from-forest-green/10 to-green-100/40" },
+                { icon: Calendar, label: "Date", value: "Mar 14th, 2026", color: "from-forest-green/10 to-emerald-100/40" },
+                { icon: Clock, label: "Time", value: "3 PM - 7 PM", color: "from-golden-yellow/10 to-amber-100/40" },
+                { icon: MapPin, label: "Venue", value: "2429 pebble bank ln Midlothian tx 76065", color: "from-forest-green/10 to-green-100/40" },
               ].map((item, i) => (
                 <motion.div
                   key={item.label}
@@ -172,7 +172,7 @@ export default function Hero() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 + i * 0.1 }}
                   whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.2 } }}
-                  className={`bg-gradient-to-br ${item.color} backdrop-blur-sm rounded-2xl p-5 border border-white/60 shadow-md hover:shadow-xl transition-all`}
+                  className={` bg-gradient-to-br ${item.color} backdrop-blur-sm rounded-2xl p-5 border border-white/60 shadow-md hover:shadow-xl transition-all`}
                 >
                   <item.icon className="w-5 h-5 text-forest-green mb-3" />
                   <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1.5 font-medium">
@@ -197,7 +197,6 @@ export default function Hero() {
               whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.3 } }}
               className="relative rounded-[32px] overflow-hidden shadow-2xl"
             >
-              {/* Replace 'invitation-card.png' with your actual image path */}
               <img 
                 src="/Adebukola-Ayeni-Jolayemi.png" 
                 alt="Baby Shower Invitation for Adebukola Ayeni Jolayemi"

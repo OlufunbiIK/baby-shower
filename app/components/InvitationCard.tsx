@@ -1,26 +1,11 @@
 "use client";
 import { motion } from "framer-motion";
 import { Download, Share2, Heart, Lock, Users, CheckCircle, XCircle, HelpCircle } from "lucide-react";
-import { useState } from "react";
 
 export default function InvitationCard() {
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
-  // Admin passwords - in production, use environment variables and proper authentication
-  const ADMIN_PASSWORDS = ["admin123", "bukola2026"];
 
-  const handleAdminLogin = () => {
-    if (ADMIN_PASSWORDS.includes(password)) {
-      setIsAuthenticated(true);
-      setError("");
-    } else {
-      setError("Incorrect password");
-      setPassword("");
-    }
-  };
+
 
   const handleDownload = async () => {
     try {
@@ -61,19 +46,6 @@ export default function InvitationCard() {
     }
   };
 
-  // Mock RSVP data - replace with actual data from your database
-  const rsvpData = {
-    attending: [
-      { name: "John Doe", email: "john@example.com", guests: 2 },
-      { name: "Jane Smith", email: "jane@example.com", guests: 1 },
-    ],
-    notAttending: [
-      { name: "Bob Wilson", email: "bob@example.com", reason: "Prior commitment" },
-    ],
-    maybe: [
-      { name: "Alice Johnson", email: "alice@example.com", note: "Checking schedule" },
-    ],
-  };
 
   return (
     <section className="py-24 px-4 bg-gradient-to-br from-rose-pink/10 via-lavender/10 to-sky-blue/10">
@@ -103,148 +75,7 @@ export default function InvitationCard() {
           <p className="text-gray-600 text-lg font-medium">Save or share this beautiful invitation</p>
         </motion.div>
 
-        {/* Admin Panel */}
-        {showAdminPanel && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-8 bg-white rounded-2xl shadow-lg border-2 border-forest-green/20 overflow-hidden"
-          >
-            {!isAuthenticated ? (
-              <div className="p-8">
-                <h3 className="text-2xl font-playfair text-forest-green mb-4 text-center">
-                  Admin Access
-                </h3>
-                <div className="max-w-md mx-auto">
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleAdminLogin()}
-                    placeholder="Enter admin password"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-forest-green focus:outline-none mb-3"
-                  />
-                  {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-                  <button
-                    onClick={handleAdminLogin}
-                    className="w-full bg-forest-green text-white py-3 rounded-lg font-semibold hover:bg-forest-green/90 transition-colors"
-                  >
-                    Login
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-playfair text-forest-green flex items-center gap-2">
-                    <Users className="w-6 h-6" />
-                    RSVP Overview
-                  </h3>
-                  <button
-                    onClick={() => {
-                      setIsAuthenticated(false);
-                      setPassword("");
-                    }}
-                    className="text-sm text-gray-500 hover:text-gray-700"
-                  >
-                    Logout
-                  </button>
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-6">
-                  {/* Attending */}
-                  <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                      <h4 className="font-semibold text-green-800">
-                        Attending ({rsvpData.attending.length})
-                      </h4>
-                    </div>
-                    <div className="space-y-3">
-                      {rsvpData.attending.map((guest, i) => (
-                        <div key={i} className="bg-white rounded-lg p-3 text-sm">
-                          <p className="font-semibold text-gray-800">{guest.name}</p>
-                          <p className="text-gray-600 text-xs">{guest.email}</p>
-                          <p className="text-gray-500 text-xs mt-1">
-                            Guests: {guest.guests}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Maybe */}
-                  <div className="bg-amber-50 rounded-xl p-6 border-2 border-amber-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <HelpCircle className="w-5 h-5 text-amber-600" />
-                      <h4 className="font-semibold text-amber-800">
-                        Maybe ({rsvpData.maybe.length})
-                      </h4>
-                    </div>
-                    <div className="space-y-3">
-                      {rsvpData.maybe.map((guest, i) => (
-                        <div key={i} className="bg-white rounded-lg p-3 text-sm">
-                          <p className="font-semibold text-gray-800">{guest.name}</p>
-                          <p className="text-gray-600 text-xs">{guest.email}</p>
-                          <p className="text-gray-500 text-xs mt-1 italic">
-                            {guest.note}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Not Attending */}
-                  <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <XCircle className="w-5 h-5 text-red-600" />
-                      <h4 className="font-semibold text-red-800">
-                        Not Attending ({rsvpData.notAttending.length})
-                      </h4>
-                    </div>
-                    <div className="space-y-3">
-                      {rsvpData.notAttending.map((guest, i) => (
-                        <div key={i} className="bg-white rounded-lg p-3 text-sm">
-                          <p className="font-semibold text-gray-800">{guest.name}</p>
-                          <p className="text-gray-600 text-xs">{guest.email}</p>
-                          {guest.reason && (
-                            <p className="text-gray-500 text-xs mt-1 italic">
-                              {guest.reason}
-                            </p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="flex justify-around text-center">
-                    <div>
-                      <p className="text-2xl font-bold text-forest-green">
-                        {rsvpData.attending.reduce((sum, g) => sum + g.guests, 0) + rsvpData.attending.length}
-                      </p>
-                      <p className="text-sm text-gray-600">Total Guests</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-amber-600">
-                        {rsvpData.maybe.length}
-                      </p>
-                      <p className="text-sm text-gray-600">Pending</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-red-600">
-                        {rsvpData.notAttending.length}
-                      </p>
-                      <p className="text-sm text-gray-600">Declined</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </motion.div>
-        )}
+   
 
         {/* Colorful Invitation Card */}
         <motion.div
