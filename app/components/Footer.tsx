@@ -38,11 +38,11 @@ export default function Footer() {
                 <span>contact@example.com</span>
               </a>
               <a
-                href="tel:+2341234567890"
+                href="tel:+14695568054"
                 className="flex items-center justify-center md:justify-end gap-2 text-gray-200 hover:text-golden-yellow transition-colors text-sm"
               >
                 <Phone className="w-4 h-4" />
-                <span>+234 123 456 7890</span>
+                <span>+1 469 556 8054</span>
               </a>
             </div>
           </div>
@@ -58,6 +58,9 @@ export default function Footer() {
             </p>
             <p className="text-sm text-gray-400">
               © 2026 Baby Shower. Designed by Olufunbi Ibrahim
+            </p>
+            <p className="text-sm text-gray-400">
+              <a href="mailto:olufunbiibrahim@gmail.com" className="text-golden-yellow hover:text-white transition-colors">Email: olufunbiibrahim@gmail.com</a>
             </p>
           </div>
         </div>
