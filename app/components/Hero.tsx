@@ -165,7 +165,7 @@ export default function Hero() {
               {[
                 { icon: Calendar, label: "Date", value: "Saturday, March 14th, 2026", color: "from-forest-green/10 to-emerald-100/40" },
                 { icon: Clock, label: "Time", value: "3 PM - 7 PM", color: "from-golden-yellow/10 to-amber-100/40" },
-                { icon: MapPin, label: "Venue", value: "2429 pebble bank ln Midlothian tx 76065", color: "from-forest-green/10 to-green-100/40" },
+                { icon: MapPin, label: "Venue", value: "2429 Pebble Bank Ln Midlothian tx 76065", color: "from-forest-green/10 to-green-100/40" },
               ].map((item, i) => (
                 <motion.div
                   key={item.label}

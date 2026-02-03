@@ -35,7 +35,7 @@ export default function Footer() {
                 className="flex items-center justify-center md:justify-end gap-2 text-gray-200 hover:text-golden-yellow transition-colors text-sm"
               >
                 <Mail className="w-4 h-4" />
-                <span>contact@example.com</span>
+                <span>gloriaayeni@gmail.com</span>
               </a>
               <a
                 href="tel:+14695568054"

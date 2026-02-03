@@ -349,8 +349,7 @@ import { Calendar, Clock, MapPin, Info, Navigation, ShieldAlert, Coffee, Gift, C
 export default function EventDetails() {
   // Event location details
   const eventLocation = {
-    name: "Venue TBA",
-    address: "2429 pebble bank ln Midlothian tx 76065",
+    address: "2429 Pebble Bank Ln Midlothian tx 76065",
     // Midlothian, TX coordinates
     lat: 32.4638,
     lng: -96.9945,
@@ -381,7 +380,6 @@ export default function EventDetails() {
     {
       icon: MapPin,
       label: "Location",
-      value: eventLocation.name,
       extra: eventLocation.address,
       bgClass: "from-sage-green/10 to-green-100/40",
       borderClass: "hover:border-sage-green/40",
@@ -502,9 +500,7 @@ export default function EventDetails() {
               <div className="flex items-center gap-3">
                 <MapPin className="w-6 h-6 text-white" />
                 <div>
-                  <h3 className="text-xl font-playfair text-white">
-                    {eventLocation.name}
-                  </h3>
+                 
                   <p className="text-white/80 text-sm">
                     {eventLocation.address}
                   </p>

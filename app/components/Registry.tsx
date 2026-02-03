@@ -66,7 +66,7 @@ export default function Registry() {
                 whileHover={{ y: -8, transition: { duration: 0.3 } }}
                 className="group"
               >
-           <div className="flex justify-center items-center w-[400px] p-6">
+           <div className="flex justify-center items-center w-full p-6">
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.95 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -176,11 +176,8 @@ export default function Registry() {
                   }}></div>
                   
                   {/* QR Code icon or image placeholder */}
-                  <div className="relative z-10 flex flex-col items-center gap-3">
+                  <div className="relative z-10 flex flex-col items-center">
                   
-                    <p className="text-xs text-gray-400 font-medium">
-                      QR Code
-                    </p>
                     {/* Replace this with your actual QR code image */}
                     <img src="/frame.png" alt="Registry QR Code" className="w-full h-full object-contain rounded-xl" />
                   </div>
