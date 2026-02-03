@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Baby Shower Celebration 🎉 - Adebukola Ayeni Jolayemi",
-    description: "You're invited! Join us for Adebukola's baby shower on March 14th, 2026, 3:00-7:00 PM CTGMT. RSVP today to celebrate our little blessing! 🎉✨👶",
+    description: "You're invited! Join us for Adebukola's baby shower on March 14th, 2026, 3:00-7:0 PM CTGMT. RSVP today to celebrate our little blessing! 🎉✨👶",
     images: ["https://baby-shower-henna.vercel.app/opengraph-image"], // Full URL
   },
   
