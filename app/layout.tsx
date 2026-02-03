@@ -21,7 +21,7 @@ interface RootLayoutProps {
 
 export const metadata: Metadata = {
   title: "Baby Shower Celebration - Adebukola Ayeni Jolayemi | March 28, 2026",
-  description: "Join us in celebrating the upcoming arrival of our precious little blessing! You're warmly invited to Adebukola's baby shower on Saturday, March 28th, 2026, from 1:30-4:30 PM CTGMT. RSVP today to be part of this joyful celebration! 🎉✨👶",
+  description: "Join us in celebrating the upcoming arrival of our precious little blessing! You're warmly invited to Adebukola's baby shower on Saturday, March 14th, 2026, from 3:00-7:00 PM CTGMT. RSVP today to be part of this joyful celebration! 🎉✨👶",
   
   keywords: ["baby shower", "Adebukola Ayeni Jolayemi", "baby celebration", "March 2026", "baby shower invitation", "RSVP"],
   
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   
   openGraph: {
     title: "Baby Shower Celebration 🎉 - Adebukola Ayeni Jolayemi",
-    description: "You're warmly invited to celebrate our little blessing! Join us for Adebukola's baby shower on March 28, 2026, 1:30-4:30 PM CTGMT. Click to RSVP and view event details! 🎉✨👶",
+    description: "You're warmly invited to celebrate our little blessing! Join us for Adebukola's baby shower on March 14th, 2026, 3:00-7:00 PM CTGMT. Click to RSVP and view event details! 🎉✨👶",
     url: "https://baby-shower-henna.vercel.app",
     siteName: "Baby Shower Invitation",
     images: [
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
         url: "https://baby-shower-henna.vercel.app/opengraph-image", // Full URL
         width: 1200,
         height: 630,
-        alt: "Baby Shower Invitation for Adebukola Ayeni Jolayemi - March 28, 2026",
+        alt: "Baby Shower Invitation for Adebukola Ayeni Jolayemi - March 14th, 2026",
       },
     ],
     locale: "en_US",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Baby Shower Celebration 🎉 - Adebukola Ayeni Jolayemi",
-    description: "You're invited! Join us for Adebukola's baby shower on March 28, 2026, 1:30-4:30 PM CTGMT. RSVP today to celebrate our little blessing! 🎉✨👶",
+    description: "You're invited! Join us for Adebukola's baby shower on March 14th, 2026, 3:00-7:00 PM CTGMT. RSVP today to celebrate our little blessing! 🎉✨👶",
     images: ["https://baby-shower-henna.vercel.app/opengraph-image"], // Full URL
   },
   
