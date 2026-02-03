@@ -30,11 +30,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Baby Shower Celebration 🎉 - Adebukola Ayeni Jolayemi",
     description: "You're warmly invited to celebrate our little blessing! Join us for Adebukola's baby shower on March 28, 2026, 1:30-4:30 PM CTGMT. Click to RSVP and view event details! 🎉✨👶",
-    url: "https://baby-shower-henna.vercel.app/",
+    url: "https://baby-shower-henna.vercel.app",
     siteName: "Baby Shower Invitation",
     images: [
       {
-        url: "/favicon.ico", // This will use the generated image
+        url: "https://baby-shower-henna.vercel.app/opengraph-image", // Full URL
         width: 1200,
         height: 630,
         alt: "Baby Shower Invitation for Adebukola Ayeni Jolayemi - March 28, 2026",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Baby Shower Celebration 🎉 - Adebukola Ayeni Jolayemi",
     description: "You're invited! Join us for Adebukola's baby shower on March 28, 2026, 1:30-4:30 PM CTGMT. RSVP today to celebrate our little blessing! 🎉✨👶",
-    images: ["/opengraph-image"],
+    images: ["https://baby-shower-henna.vercel.app/opengraph-image"], // Full URL
   },
   
   robots: {
@@ -68,7 +68,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <head>
         {/* Additional meta tags for better preview */}
         <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="1600" />
+<meta property="og:image:height" content="630" /> 
         <meta name="theme-color" content="#1a4d2e" />
       </head>
       <body className={`${playfair.variable} ${montserrat.variable} font-sans`}>
