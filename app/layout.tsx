@@ -20,40 +20,37 @@ interface RootLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: "Baby Shower - Adebukola Ayeni Jolayemi | March 28, 2026",
-  description: "Join us in celebrating the upcoming arrival of our little blessing! Baby shower for Adebukola on Saturday, March 28th, 2026, 1:30-4:30 PM CTGMT. RSVP today! 🎉✨",
+  title: "Baby Shower Celebration - Adebukola Ayeni Jolayemi | March 28, 2026",
+  description: "Join us in celebrating the upcoming arrival of our precious little blessing! You're warmly invited to Adebukola's baby shower on Saturday, March 28th, 2026, from 1:30-4:30 PM CTGMT. RSVP today to be part of this joyful celebration! 🎉✨👶",
   
-  keywords: ["baby shower", "Adebukola Ayeni Jolayemi", "baby celebration", "March 2026", "baby shower invitation"],
+  keywords: ["baby shower", "Adebukola Ayeni Jolayemi", "baby celebration", "March 2026", "baby shower invitation", "RSVP"],
   
   authors: [{ name: "Adebukola Ayeni Jolayemi" }],
   
-  // Open Graph (Facebook, WhatsApp, LinkedIn)
   openGraph: {
-    title: "Baby Shower - Adebukola Ayeni Jolayemi 🎉",
-    description: "You're invited! Join us for a joyful baby shower celebration. March 28, 2026 | 1:30-4:30 PM CTGMT",
-    url: "https://baby-shower-henna.vercel.app/", 
+    title: "Baby Shower Celebration 🎉 - Adebukola Ayeni Jolayemi",
+    description: "You're warmly invited to celebrate our little blessing! Join us for Adebukola's baby shower on March 28, 2026, 1:30-4:30 PM CTGMT. Click to RSVP and view event details! 🎉✨👶",
+    url: "https://your-domain.vercel.app",
     siteName: "Baby Shower Invitation",
     images: [
       {
-        url: "/Adebukola-Ayeni-Jolayemi.png", // Your invitation image
+        url: "/opengraph-image", // This will use the generated image
         width: 1200,
-        height: 1600,
-        alt: "Baby Shower Invitation for Adebukola Ayeni Jolayemi",
+        height: 630,
+        alt: "Baby Shower Invitation for Adebukola Ayeni Jolayemi - March 28, 2026",
       },
     ],
     locale: "en_US",
     type: "website",
   },
   
-  // Twitter Card
   twitter: {
     card: "summary_large_image",
-    title: "Baby Shower - Adebukola Ayeni Jolayemi 🎉",
-    description: "Join us for a joyful baby shower celebration! March 28, 2026",
-    images: ["/Adebukola-Ayeni-Jolayemi.png"],
+    title: "Baby Shower Celebration 🎉 - Adebukola Ayeni Jolayemi",
+    description: "You're invited! Join us for Adebukola's baby shower on March 28, 2026, 1:30-4:30 PM CTGMT. RSVP today to celebrate our little blessing! 🎉✨👶",
+    images: ["/opengraph-image"],
   },
   
-  // Additional meta tags
   robots: {
     index: true,
     follow: true,
