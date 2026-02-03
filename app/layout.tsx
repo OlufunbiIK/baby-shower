@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     siteName: "Baby Shower Invitation",
     images: [
       {
-        url: "/opengraph-image", // This will use the generated image
+        url: "/favicon.ico", // This will use the generated image
         width: 1200,
         height: 630,
         alt: "Baby Shower Invitation for Adebukola Ayeni Jolayemi - March 28, 2026",
