@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Baby Shower Celebration 🎉 - Adebukola Ayeni Jolayemi",
     description: "You're warmly invited to celebrate our little blessing! Join us for Adebukola's baby shower on March 28, 2026, 1:30-4:30 PM CTGMT. Click to RSVP and view event details! 🎉✨👶",
-    url: "https://your-domain.vercel.app",
+    url: "https://baby-shower-henna.vercel.app/",
     siteName: "Baby Shower Invitation",
     images: [
       {
