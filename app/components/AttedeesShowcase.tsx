@@ -17,6 +17,7 @@
 
 //   const [attendees, setAttendees] = useState<Attendee[]>([]);
 //   const [loading, setLoading] = useState(true);
+//   const [refreshing, setRefreshing] = useState(false);
 //   const [showGuestList, setShowGuestList] = useState(false);
 //   const [isAuthenticated, setIsAuthenticated] = useState(false);
 //   const [password, setPassword] = useState("");
@@ -25,55 +26,46 @@
 //   const ADMIN_PASSWORDS = ["admin123", "bukola2026"];
 //   const SPREADSHEET_ID = "15ewgjkz5cgGBJhSxiOjQ98mtPtv7VkkrXBufcj1Z9no";
 //   const SHEET_ID = "1214079262";
-//   const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${SHEET_ID}`;
+  
+//   // Add timestamp to URL to prevent caching
+//   const getSheetURL = () => {
+//     const timestamp = new Date().getTime();
+//     return `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${SHEET_ID}&timestamp=${timestamp}`;
+//   };
 
 
 
 //  async function fetchGuestData(): Promise<Attendee[]> {
 //   try {
-//     // Try multiple CORS proxies in order
-//     const CORS_PROXIES = [
-//       "",  // Try direct first (if sheet is public)
-//       "https://corsproxy.io/?",
-//       "https://api.codetabs.com/v1/proxy?quest=",
-//       "https://api.allorigins.win/raw?url=",
-//     ];
+//     // Use Next.js API route to bypass CORS
+//     const timestamp = new Date().getTime();
+//     const url = `/api/guests?_=${timestamp}`;
     
-//     let csvText = "";
-//     let fetchSuccess = false;
+//     console.log("Fetching from API route:", url);
     
-//     for (const proxy of CORS_PROXIES) {
-//       try {
-//         const url = proxy ? `${proxy}${encodeURIComponent(SHEET_CSV_URL)}` : SHEET_CSV_URL;
-//         console.log(`Attempting fetch with ${proxy || 'direct connection'}:`, url);
-        
-//         const response = await fetch(url, {
-//           headers: {
-//             'Accept': 'text/csv,text/plain,*/*',
-//           },
-//           cache: 'no-store'
-//         });
-        
-//         if (response.ok) {
-//           csvText = await response.text();
-//           console.log("✅ Fetch successful with", proxy || "direct connection");
-//           console.log("Raw CSV preview:", csvText.slice(0, 200));
-//           fetchSuccess = true;
-//           break;
-//         }
-//       } catch (proxyError) {
-//         console.log(`Failed with ${proxy || 'direct'}, trying next...`);
-//         continue;
-//       }
-//     }
+//     const response = await fetch(url, {
+//       headers: {
+//         'Accept': 'text/csv,text/plain,*/*',
+//       },
+//       cache: 'no-store'
+//     });
     
-//     if (!fetchSuccess) {
-//       console.error("All fetch methods failed");
+//     if (!response.ok) {
+//       console.error("API fetch failed:", response.status);
 //       return [];
 //     }
+    
+//     const csvText = await response.text();
+//     console.log("✅ Fetch successful from API route");
+//     console.log("Raw CSV preview:", csvText.slice(0, 200));
 
 //     // Split CSV rows safely
 //     function parseCSV(text: string): string[][] {
+//       if (!text || text.trim().length === 0) {
+//         console.error("Empty CSV text received");
+//         return [];
+//       }
+      
 //       const rows: string[][] = [];
 //       let currentRow: string[] = [];
 //       let currentCell = "";
@@ -81,59 +73,185 @@
     
 //       for (let i = 0; i < text.length; i++) {
 //         const char = text[i];
+//         const nextChar = text[i + 1];
     
 //         if (char === '"') {
-//           insideQuotes = !insideQuotes;
+//           // Handle escaped quotes ("")
+//           if (insideQuotes && nextChar === '"') {
+//             currentCell += '"';
+//             i++; // Skip next quote
+//           } else {
+//             insideQuotes = !insideQuotes;
+//           }
 //         } else if (char === "," && !insideQuotes) {
 //           currentRow.push(currentCell.trim());
 //           currentCell = "";
-//         } else if (char === "\n" && !insideQuotes) {
+//         } else if ((char === "\n" || char === "\r") && !insideQuotes) {
+//           // Handle both \n and \r\n line endings
+//           if (char === "\r" && nextChar === "\n") {
+//             i++; // Skip the \n in \r\n
+//           }
 //           currentRow.push(currentCell.trim());
-//           rows.push(currentRow.map(c => c.replace(/^"|"$/g, "")));
+//           if (currentRow.some(cell => cell.length > 0)) {
+//             rows.push(currentRow.map(c => c.replace(/^"|"$/g, "")));
+//           }
 //           currentRow = [];
 //           currentCell = "";
 //         } else {
 //           currentCell += char;
 //         }
 //       }
+      
+//       // Don't forget the last row if file doesn't end with newline
+//       if (currentCell.length > 0 || currentRow.length > 0) {
+//         currentRow.push(currentCell.trim());
+//         if (currentRow.some(cell => cell.length > 0)) {
+//           rows.push(currentRow.map(c => c.replace(/^"|"$/g, "")));
+//         }
+//       }
     
-//       return rows.filter(r => r.length > 1);
+//       console.log("Parser returned", rows.length, "rows");
+//       return rows.filter(r => r && r.length > 0 && r.some(cell => cell.length > 0));
 //     }
 //     const rows = parseCSV(csvText);
     
+//     console.log("=== CSV PARSING DEBUG ===");
+//     console.log("Total rows parsed:", rows.length);
+//     console.log("First 5 rows:", rows.slice(0, 5));
+//     console.log("ALL ROWS:", rows);
+
+//     if (rows.length === 0) {
+//       console.error("No rows parsed from CSV!");
+//       return [];
+//     }
 
 //     const [headers, ...dataRows] = rows;
 
+//     console.log("Headers:", headers);
+//     console.log("Number of data rows:", dataRows.length);
+    
+//     // Safety check for headers
+//     if (!headers || headers.length === 0) {
+//       console.error("No headers found in CSV!");
+//       console.log("Raw CSV text:", csvText.slice(0, 500));
+//       return [];
+//     }
+    
 //     // Map header → index (lowercased for safety)
 //     const headerIndex: Record<string, number> = {};
 //     headers.forEach((header, index) => {
-//       headerIndex[header.toLowerCase()] = index;
+//       if (header) {
+//         headerIndex[header.toLowerCase()] = index;
+//       }
 //     });
 
 //     console.log("Header index map:", headerIndex);
-//     console.log("First data row:", dataRows[0]);
+//     console.log("First 3 data rows:", dataRows.slice(0, 3));
+//     console.log("Total rows before filtering:", dataRows.length);
 
-//     return dataRows
-//       .filter(row => row[headerIndex["name"]])
-//       .map(row => {
-//         const attendanceText = row[headerIndex["attendance"]] || "";
-
+//     const processed = dataRows
+//       .map((row, rowIndex) => {
+//         console.log(`Processing row ${rowIndex}:`, row);
+        
+//         // Try to find attendance in the row - it usually contains an emoji or keyword
+//         let attendanceText = "";
+        
+//         // Look for the attendance column
+//         for (let i = 0; i < row.length; i++) {
+//           if (row[i] && (row[i].includes("🎉") || row[i].includes("🤔") || row[i].includes("😢") || 
+//               row[i].toLowerCase().includes("yes") || row[i].toLowerCase().includes("maybe") || 
+//               row[i].toLowerCase().includes("sorry"))) {
+//             attendanceText = row[i];
+//             console.log(`  Found attendance in column ${i}:`, attendanceText);
+//             break;
+//           }
+//         }
 
 //         let attendance: "going" | "maybe" | "cant-go" = "cant-go";
 
-//         if (/yes|going|there/i.test(attendanceText)) {
+//         if (/🎉|yes|going|there|i'll be there/i.test(attendanceText)) {
 //           attendance = "going";
-//         } else if (/maybe/i.test(attendanceText)) {
+//         } else if (/🤔|maybe|confirm soon/i.test(attendanceText)) {
 //           attendance = "maybe";
+//         } else if (/😢|sorry|can't|cant/i.test(attendanceText)) {
+//           attendance = "cant-go";
 //         }
 
-//         return {
-//           name: row[headerIndex["name"]] || "Anonymous",
+//         console.log("  Detected attendance:", attendance);
+
+//         // Try to get name from different possible columns
+//         // Skip timestamp (column 0), try column 1 first, then others
+//         let guestName = "";
+        
+//         // Try common name column positions
+//         for (let i = 1; i < Math.min(row.length, 4); i++) {
+//           const cell = row[i];
+//           if (cell && cell.trim() !== "" && cell !== "N/A" && cell !== "Declined" && 
+//               !cell.includes("@") && !cell.match(/^\d+$/)) {
+//             guestName = cell;
+//             console.log(`  Found name in column ${i}:`, guestName);
+//             break;
+//           }
+//         }
+        
+//         // If still no name, try to extract from email
+//         if (!guestName) {
+//           for (let i = 1; i < row.length; i++) {
+//             if (row[i] && row[i].includes("@")) {
+//               guestName = row[i].split("@")[0];
+//               console.log(`  Extracted name from email in column ${i}:`, guestName);
+//               break;
+//             }
+//           }
+//         }
+
+//         if (!guestName) {
+//           guestName = "Guest " + (rowIndex + 1);
+//           console.log("  Using fallback name:", guestName);
+//         }
+
+//         // Try to find the guest count
+//         let guestCount = 1;
+//         for (let i = 0; i < row.length; i++) {
+//           const num = parseInt(row[i]);
+//           if (!isNaN(num) && num > 0 && num < 50) {
+//             guestCount = num;
+//             console.log(`  Found guest count in column ${i}:`, guestCount);
+//             break;
+//           }
+//         }
+
+//         // Try to find message - usually the last non-empty column
+//         let message = "";
+//         for (let i = row.length - 1; i >= 0; i--) {
+//           if (row[i] && row[i].length > 2 && !row[i].includes("@") && isNaN(parseInt(row[i])) && 
+//               !row[i].includes("🎉") && !row[i].includes("🤔") && !row[i].includes("😢") &&
+//               !/^\d+$/.test(row[i])) {
+//             message = row[i];
+//             console.log(`  Found message in column ${i}:`, message);
+//             break;
+//           }
+//         }
+
+//         const result = {
+//           name: guestName,
 //           attendance,
-//           guests: parseInt(row[headerIndex["number of guests"]]) || 1,
-//           message: row[headerIndex["message"]] || "",
+//           guests: guestCount,
+//           message: message || "",
 //         };
+        
+//         console.log("  Final result:", result);
+//         return result;
 //       });
+
+//     console.log("=== PROCESSING COMPLETE ===");
+//     console.log("Total processed guests:", processed.length);
+//     console.log("All processed guests:", processed);
+//     console.log("Going:", processed.filter(a => a.attendance === "going").length);
+//     console.log("Maybe:", processed.filter(a => a.attendance === "maybe").length);
+//     console.log("Can't go:", processed.filter(a => a.attendance === "cant-go").length);
+    
+//     return processed;
 //   } catch (error) {
 //     console.error("Error fetching guest data:", error);
 //     return [];
@@ -144,7 +262,7 @@
 //       // ADD THIS useEffect RIGHT HERE:
 //       useEffect(() => {
 //         async function loadGuests() {
-//           console.log("🔄 Loading guests from:", SHEET_CSV_URL);
+//           console.log("🔄 Loading guests from:", getSheetURL());
 //           setLoading(true);
           
 //           const data = await fetchGuestData();
@@ -157,8 +275,8 @@
         
 //         loadGuests();
         
-//         // Auto-refresh every 30 seconds
-//         const interval = setInterval(loadGuests, 200000);
+//         // Auto-refresh every 30 seconds (30000ms) - reduced from 200000ms for better updates
+//         const interval = setInterval(loadGuests, 30000);
 //         return () => clearInterval(interval);
 //       }, []);
 
@@ -170,6 +288,13 @@
 //       setError("Incorrect password");
 //       setPassword("");
 //     }
+//   };
+
+//   const handleRefresh = async () => {
+//     setRefreshing(true);
+//     const data = await fetchGuestData();
+//     setAttendees(data);
+//     setRefreshing(false);
 //   };
 
 //   const stats = {
@@ -294,9 +419,17 @@
 
 //           <button
 //             onClick={() => setShowGuestList(true)}
-//             className="w-full bg-gradient-to-r from-forest-green to-emerald-600 hover:from-forest-green/90 hover:to-emerald-600/90 text-white font-semibold py-3 transition-all shadow-md hover:shadow-lg"
+//             className="w-full bg-gradient-to-r from-forest-green to-emerald-600 hover:from-forest-green/90 hover:to-emerald-600/90 text-white font-semibold py-3 transition-all shadow-md hover:shadow-lg mb-2"
 //           >
 //             View Full Guest List
+//           </button>
+
+//           <button
+//             onClick={handleRefresh}
+//             disabled={refreshing}
+//             className="w-full bg-white border-2 border-forest-green text-forest-green hover:bg-forest-green/5 font-semibold py-2 transition-all shadow-sm hover:shadow-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+//           >
+//             {refreshing ? "Refreshing..." : "↻ Refresh List"}
 //           </button>
 
 //           <p className="text-center text-gray-500 text-xs mt-4">
@@ -483,7 +616,6 @@
 // }
 
 
-
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Lock, X } from "lucide-react";
@@ -578,9 +710,13 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
             i++; // Skip the \n in \r\n
           }
           currentRow.push(currentCell.trim());
-          if (currentRow.some(cell => cell.length > 0)) {
+          
+          // Only add row if it has at least one non-empty cell
+          const hasActualContent = currentRow.some(cell => cell && cell.trim().length > 0);
+          if (hasActualContent) {
             rows.push(currentRow.map(c => c.replace(/^"|"$/g, "")));
           }
+          
           currentRow = [];
           currentCell = "";
         } else {
@@ -591,30 +727,72 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
       // Don't forget the last row if file doesn't end with newline
       if (currentCell.length > 0 || currentRow.length > 0) {
         currentRow.push(currentCell.trim());
-        if (currentRow.some(cell => cell.length > 0)) {
+        const hasActualContent = currentRow.some(cell => cell && cell.trim().length > 0);
+        if (hasActualContent) {
           rows.push(currentRow.map(c => c.replace(/^"|"$/g, "")));
         }
       }
     
       console.log("Parser returned", rows.length, "rows");
-      return rows.filter(r => r && r.length > 0 && r.some(cell => cell.length > 0));
+      console.log("First 3 rows:", rows.slice(0, 3));
+      
+      // Final filter: remove any rows that are just empty strings or commas
+      return rows.filter(r => {
+        if (!r || r.length === 0) return false;
+        // Check if row has any meaningful content (not just empty strings)
+        const hasContent = r.some(cell => cell && cell.trim() !== "");
+        return hasContent;
+      });
     }
     const rows = parseCSV(csvText);
     
     console.log("=== CSV PARSING DEBUG ===");
     console.log("Total rows parsed:", rows.length);
     console.log("First 5 rows:", rows.slice(0, 5));
-    console.log("ALL ROWS:", rows);
 
     if (rows.length === 0) {
       console.error("No rows parsed from CSV!");
       return [];
     }
 
-    const [headers, ...dataRows] = rows;
+    const [headers, ...allDataRows] = rows;
 
     console.log("Headers:", headers);
-    console.log("Number of data rows:", dataRows.length);
+    console.log("Number of data rows before filtering:", allDataRows.length);
+    
+    // ULTRA-STRICT FILTER: Remove rows that are completely empty or only contain commas
+    const validDataRows = allDataRows.filter(row => {
+      // Check if row has ANY non-empty, non-whitespace content
+      const hasAnyContent = row.some(cell => {
+        if (!cell) return false;
+        const trimmed = cell.trim();
+        if (trimmed === "" || trimmed === ",") return false;
+        return true;
+      });
+      
+      if (!hasAnyContent) {
+        console.log("❌ Filtering out completely empty row:", row);
+        return false;
+      }
+      
+      // Additional check: Must have content beyond just timestamp (column 0)
+      const hasContentBeyondTimestamp = row.slice(1).some(cell => {
+        if (!cell) return false;
+        const trimmed = cell.trim();
+        return trimmed !== "" && trimmed !== ",";
+      });
+      
+      if (!hasContentBeyondTimestamp) {
+        console.log("❌ Filtering out row with only timestamp:", row);
+        return false;
+      }
+      
+      console.log("✅ Keeping row:", row);
+      return true;
+    });
+    
+    console.log("Number of valid data rows after filtering:", validDataRows.length);
+    console.log("Valid rows:", validDataRows);
     
     // Safety check for headers
     if (!headers || headers.length === 0) {
@@ -622,20 +800,17 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
       console.log("Raw CSV text:", csvText.slice(0, 500));
       return [];
     }
-    
-    // Map header → index (lowercased for safety)
-    const headerIndex: Record<string, number> = {};
-    headers.forEach((header, index) => {
-      if (header) {
-        headerIndex[header.toLowerCase()] = index;
-      }
-    });
 
-    console.log("Header index map:", headerIndex);
-    console.log("First 3 data rows:", dataRows.slice(0, 3));
-    console.log("Total rows before filtering:", dataRows.length);
-
-    const processed = dataRows
+    const processed = validDataRows
+      .filter(row => {
+        // Skip completely empty rows
+        const hasData = row.some(cell => cell && cell.trim() !== "");
+        if (!hasData) {
+          console.log("  Skipping empty row");
+          return false;
+        }
+        return true;
+      })
       .map((row, rowIndex) => {
         console.log(`Processing row ${rowIndex}:`, row);
         
@@ -691,11 +866,6 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
           }
         }
 
-        if (!guestName) {
-          guestName = "Guest " + (rowIndex + 1);
-          console.log("  Using fallback name:", guestName);
-        }
-
         // Try to find the guest count
         let guestCount = 1;
         for (let i = 0; i < row.length; i++) {
@@ -720,7 +890,7 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
         }
 
         const result = {
-          name: guestName,
+          name: guestName || null, // Use null instead of fallback
           attendance,
           guests: guestCount,
           message: message || "",
@@ -728,7 +898,15 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
         
         console.log("  Final result:", result);
         return result;
-      });
+      })
+      .filter(guest => {
+        // Remove entries without a valid name
+        if (!guest.name) {
+          console.log("  Filtered out guest with no name");
+          return false;
+        }
+        return true;
+      }) as Attendee[];
 
     console.log("=== PROCESSING COMPLETE ===");
     console.log("Total processed guests:", processed.length);
@@ -761,7 +939,7 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
         
         loadGuests();
         
-        // Auto-refresh every 30 seconds (30000ms) - reduced from 200000ms for better updates
+        // Auto-refresh every 30 seconds (30000ms)
         const interval = setInterval(loadGuests, 30000);
         return () => clearInterval(interval);
       }, []);
@@ -841,6 +1019,41 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
             <div className="h-32 bg-gray-200 rounded"></div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  // Show "No guests yet" message when the sheet is empty
+  if (attendees.length === 0) {
+    return (
+      <div className="w-full lg:w-130 flex-shrink-0">
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="bg-white/60 backdrop-blur-sm p-8 shadow-xl border-2 border-white/80 sticky top-8"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <Users className="w-6 h-6 text-forest-green" />
+            <h3 className="text-2xl font-playfair text-forest-green">Celebrating With Us</h3>
+          </div>
+
+          <div className="text-center py-12">
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="w-10 h-10 text-gray-400" />
+            </div>
+            <p className="text-gray-600 text-lg mb-2">No RSVPs yet</p>
+            <p className="text-gray-400 text-sm">Be the first to join the celebration!</p>
+          </div>
+
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="w-full bg-white border-2 border-forest-green text-forest-green hover:bg-forest-green/5 font-semibold py-2 transition-all shadow-sm hover:shadow-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {refreshing ? "Refreshing..." : "↻ Refresh List"}
+          </button>
+        </motion.div>
       </div>
     );
   }
@@ -1013,84 +1226,97 @@ const [activeTab, setActiveTab] = useState<GuestTab>("all");
                       </button>
                     </div>
                   </div>
-                ) : (
-                  /* Guest List */
-                  <div>
-                    {/* Tabs */}
-                    <div className="flex gap-2 mb-6 border-b border-gray-200">
-  <button
-    onClick={() => setActiveTab("all")}
-    className={`px-6 py-3 font-semibold transition-colors ${
-      activeTab === "all"
-        ? "text-forest-green border-b-2 border-forest-green"
-        : "text-gray-500 hover:text-gray-700"
-    }`}
-  >
-    All ({stats.total})
-  </button>
+             ) : (
+              /* Guest List */
+              <div>
+                {/* Header with Refresh Button */}
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-gray-800">
+                    {stats.total} {stats.total === 1 ? 'Guest' : 'Guests'}
+                  </h4>
+                  <button
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-forest-green text-forest-green hover:bg-forest-green/5 font-semibold rounded-lg transition-all shadow-sm hover:shadow-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className={refreshing ? "animate-spin" : ""}>↻</span>
+                    {refreshing ? "Refreshing..." : "Refresh"}
+                  </button>
+                </div>
 
-  <button
-    onClick={() => setActiveTab("going")}
-    className={`px-6 py-3 font-semibold transition-colors ${
-      activeTab === "going"
-        ? "text-forest-green border-b-2 border-forest-green"
-        : "text-gray-500 hover:text-gray-700"
-    }`}
-  >
-    Going ({stats.going})
-  </button>
+                {/* Tabs */}
+                <div className="flex gap-2 mb-6 border-b border-gray-200">
+                  <button
+                    onClick={() => setActiveTab("all")}
+                    className={`px-6 py-3 font-semibold transition-colors ${
+                      activeTab === "all"
+                        ? "text-forest-green border-b-2 border-forest-green"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    All ({stats.total})
+                  </button>
 
-  <button
-    onClick={() => setActiveTab("maybe")}
-    className={`px-6 py-3 font-semibold transition-colors ${
-      activeTab === "maybe"
-        ? "text-amber-600 border-b-2 border-amber-500"
-        : "text-gray-500 hover:text-gray-700"
-    }`}
-  >
-    Maybe ({stats.maybe})
-  </button>
+                  <button
+                    onClick={() => setActiveTab("going")}
+                    className={`px-6 py-3 font-semibold transition-colors ${
+                      activeTab === "going"
+                        ? "text-forest-green border-b-2 border-forest-green"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    Going ({stats.going})
+                  </button>
 
-  <button
-    onClick={() => setActiveTab("cant-go")}
-    className={`px-6 py-3 font-semibold transition-colors ${
-      activeTab === "cant-go"
-        ? "text-gray-700 border-b-2 border-gray-400"
-        : "text-gray-500 hover:text-gray-700"
-    }`}
-  >
-    Can't Make It ({stats.cantGo})
-  </button>
-</div>
+                  <button
+                    onClick={() => setActiveTab("maybe")}
+                    className={`px-6 py-3 font-semibold transition-colors ${
+                      activeTab === "maybe"
+                        ? "text-amber-600 border-b-2 border-amber-500"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    Maybe ({stats.maybe})
+                  </button>
 
+                  <button
+                    onClick={() => setActiveTab("cant-go")}
+                    className={`px-6 py-3 font-semibold transition-colors ${
+                      activeTab === "cant-go"
+                        ? "text-gray-700 border-b-2 border-gray-400"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    Can't Make It ({stats.cantGo})
+                  </button>
+                </div>
 
-                    {/* Guest Cards */}
-                    <div className="space-y-3">
-                    {filteredGuests.map((attendee, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-100 hover:border-green-200 hover:bg-green-50/50 transition-all"
-                        >
-                          <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${getAvatarColor(attendee.attendance)} flex items-center justify-center text-white font-bold shadow-md`}>
-                            {getInitials(attendee.name)}
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-semibold text-gray-800">{attendee.name}</p>
-        
-
-                          </div>
-                          {attendee.message && (
-                            <div className="text-xs text-gray-500 italic max-w-xs">
-                              "{attendee.message}"
-                            </div>
-                          )}
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
+                {/* Guest Cards */}
+                <div className="space-y-3">
+                  {filteredGuests.map((attendee, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-100 hover:border-green-200 hover:bg-green-50/50 transition-all"
+                    >
+                      <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${getAvatarColor(attendee.attendance)} flex items-center justify-center text-white font-bold shadow-md`}>
+                        {getInitials(attendee.name)}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800">{attendee.name}</p>
+                      </div>
+                      {attendee.message && (
+                        <div className="text-xs text-gray-500 italic max-w-xs">
+                          "{attendee.message}"
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            
                 )}
               </div>
             </motion.div>

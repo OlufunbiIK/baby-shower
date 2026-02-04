@@ -112,7 +112,7 @@ export default function RSVPForm({
         setMessage("");
         setPlusOne("");
         setIsSubmitted(false);
-      }, 3000);
+      }, 5000);
     } catch (error) {
       console.error(error);
       alert("There was an error submitting your RSVP.");
