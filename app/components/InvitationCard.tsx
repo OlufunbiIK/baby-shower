@@ -33,7 +33,7 @@ export default function InvitationCard() {
       try {
         await navigator.share({
           title: "Baby Shower Invitation - Adebukola Ayeni Jolayemi",
-          text: "Join us for a special baby shower celebration on March 28th, 2026!",
+          text: "Join us for a special baby shower celebration on March 14th, 2026!",
           url: window.location.href,
         });
       } catch (err) {
