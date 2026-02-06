@@ -22,7 +22,7 @@ export default function EventDetails() {
     lng: -96.9561,
     // Google Maps embed URL for Traphene Hickman Public Library
     mapEmbedUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3355.4!2d-96.9561!3d32.5882!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864e7d1f5f5f5f5f%3A0x1234567890abcdef!2sTraphene%20Hickman%20Public%20Library!5e0!3m2!1sen!2sus!4v1706454123456!5m2!1sen!2sus",
+      "https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=Traphene+Hickman+Public+Library+450+Pioneer+Trail+Cedar+Hill+TX+75104&zoom=16",
   };
 
   const eventDetails = [
@@ -48,8 +48,7 @@ export default function EventDetails() {
     {
       icon: MapPin,
       label: "Location",
-      value:
-        "Traphene Hickman Public Library, 450 Pioneer Trail, Cedar Hill, TX 75104",
+      extra: eventLocation.address,
       bgClass: "from-sage-green/10 to-green-100/40",
       borderClass: "hover:border-sage-green/40",
       iconBgClass: "from-white to-sage-green/20",

@@ -2,6 +2,7 @@ import { Playfair_Display, Montserrat } from "next/font/google";
 import "./globals.css";
 import { ReactNode } from "react";
 import type { Metadata } from "next";
+import CustomCursor from "./components/CustomCursor";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -82,6 +83,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta name="theme-color" content="#1a4d2e" />
       </head>
       <body className={`${playfair.variable} ${montserrat.variable} font-sans`}>
+        <CustomCursor />
         {children}
       </body>
     </html>

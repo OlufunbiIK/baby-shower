@@ -183,7 +183,8 @@ export default function Hero() {
                 {
                   icon: Clock,
                   label: "Time",
-                  value: "4 PM - 8 PM",
+                  value: "4 PM – 8 PM",
+                  note: "To help us enjoy every moment, we’ll be keeping to time",
                   color: "from-golden-yellow/10 to-amber-100/40",
                 },
                 {
@@ -213,6 +214,11 @@ export default function Hero() {
                   <p className="text-base font-semibold text-forest-green">
                     {item.value}
                   </p>
+                  {item.note && (
+                    <p className="text-xs text-gray-500 mt-1 font-light">
+                      {item.note}
+                    </p>
+                  )}
                 </motion.div>
               ))}
             </motion.div>
