@@ -20,30 +20,30 @@ export default function Home() {
     <main className="min-h-screen relative">
       {/* Floral background for entire page */}
       <FloralBackground />
-      
+
       {/* Content with relative positioning */}
       <div className="relative z-10">
         <Hero />
         <PrivacyNotice />
         <InvitationCard />
         <EventDetails />
-        
+
         {/* RSVP Section with Guest Showcase Side-by-Side */}
-        <section className="py-24 px-4 bg-gradient-to-br from-amber-50/50 via-emerald-50/30 to-rose-50/40 relative overflow-hidden">
+        <section className="py-24 px-4 bg-linear-to-br from-amber-50/50 via-emerald-50/30 to-rose-50/40 relative overflow-hidden">
           {/* Decorative background elements */}
           <div className="absolute inset-0 pointer-events-none">
             <motion.div
-              animate={{ 
+              animate={{
                 scale: [1, 1.2, 1],
-                opacity: [0.03, 0.05, 0.03]
+                opacity: [0.03, 0.05, 0.03],
               }}
               transition={{ duration: 8, repeat: Infinity }}
               className="absolute top-20 right-20 w-96 h-96 bg-forest-green rounded-full blur-3xl"
             />
             <motion.div
-              animate={{ 
+              animate={{
                 scale: [1, 1.3, 1],
-                opacity: [0.04, 0.06, 0.04]
+                opacity: [0.04, 0.06, 0.04],
               }}
               transition={{ duration: 10, repeat: Infinity, delay: 1 }}
               className="absolute bottom-20 left-20 w-80 h-80 bg-golden-yellow rounded-full blur-3xl"
@@ -52,7 +52,7 @@ export default function Home() {
 
           <div className="flex flex-col lg:flex-row gap-20 items-center max-w-6xl mx-auto relative z-10">
             {/* RSVP Form - Left Side */}
-            <RSVPForm 
+            <RSVPForm
               isAdminAuthenticated={isAdminAuthenticated}
               setIsAdminAuthenticated={setIsAdminAuthenticated}
             />
@@ -82,7 +82,7 @@ export default function Home() {
 
         {/* Full Dashboard (only shown when authenticated) */}
         {isAdminAuthenticated && <AttendeesDashboard />}
-        
+
         <Registry />
         <Footer />
       </div>

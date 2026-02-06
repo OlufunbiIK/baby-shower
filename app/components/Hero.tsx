@@ -1,6 +1,14 @@
 "use client";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Clock, ArrowDown, Baby, Heart, Sparkles } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Clock,
+  ArrowDown,
+  Baby,
+  Heart,
+  Sparkles,
+} from "lucide-react";
 
 export default function Hero() {
   return (
@@ -8,12 +16,12 @@ export default function Hero() {
       {/* Vibrant colorful background */}
       {/* <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-amber-50 to-green-50"></div> */}
       <div className="absolute"></div>
-      
+
       {/* Colorful overlay patterns */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(26,77,46,0.08)_0%,transparent_50%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(245,200,66,0.12)_0%,transparent_50%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_30%,rgba(135,197,164,0.08)_0%,transparent_40%)]"></div>
-      
+
       {/* Decorative colored shapes */}
       <div className="absolute top-20 right-20 w-96 h-96 bg-forest-green/5 rounded-full blur-3xl"></div>
       <div className="absolute bottom-20 left-20 w-80 h-80 bg-golden-yellow/8 rounded-full blur-3xl"></div>
@@ -83,7 +91,7 @@ export default function Hero() {
           transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
           className="absolute bottom-1/4 left-12 w-32 h-32 border-2 border-golden-yellow/20 rounded-full"
         />
-        
+
         {/* Additional decorative circles */}
         <motion.div
           animate={{ rotate: 180, scale: [1, 1.1, 1] }}
@@ -125,7 +133,10 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.9 }}
               className="space-y-4"
-            ><h1 className="font-playfair font-semibold text-forest-green block mt-2">Shhhh 🤫  Don't Tell Anyone Yet!</h1>
+            >
+              <h1 className="font-playfair font-semibold text-forest-green block mt-2">
+                Shhhh 🤫 Don't Tell Anyone Yet!
+              </h1>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-playfair text-forest-green leading-[1.1] tracking-tight">
                 A Little One
@@ -163,16 +174,36 @@ export default function Hero() {
               className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-6"
             >
               {[
-                { icon: Calendar, label: "Date", value: "Saturday, March 14th, 2026", color: "from-forest-green/10 to-emerald-100/40" },
-                { icon: Clock, label: "Time", value: "3 PM - 7 PM", color: "from-golden-yellow/10 to-amber-100/40" },
-                { icon: MapPin, label: "Venue", value: "2429 Pebble Bank Ln Midlothian tx 76065", color: "from-forest-green/10 to-green-100/40" },
+                {
+                  icon: Calendar,
+                  label: "Date",
+                  value: "Saturday, March 14th, 2026",
+                  color: "from-forest-green/10 to-emerald-100/40",
+                },
+                {
+                  icon: Clock,
+                  label: "Time",
+                  value: "4 PM - 8 PM",
+                  color: "from-golden-yellow/10 to-amber-100/40",
+                },
+                {
+                  icon: MapPin,
+                  label: "Venue",
+                  value:
+                    "Traphene Hickman Public Library 450 Pioneer Trail Cedar Hill Tx 75104",
+                  color: "from-forest-green/10 to-green-100/40",
+                },
               ].map((item, i) => (
                 <motion.div
                   key={item.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 + i * 0.1 }}
-                  whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.2 } }}
+                  whileHover={{
+                    y: -4,
+                    scale: 1.02,
+                    transition: { duration: 0.2 },
+                  }}
                   className={` bg-gradient-to-br ${item.color} backdrop-blur-sm rounded-2xl p-5 border border-white/60 shadow-md hover:shadow-xl transition-all`}
                 >
                   <item.icon className="w-5 h-5 text-forest-green mb-3" />
@@ -198,15 +229,15 @@ export default function Hero() {
               whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.3 } }}
               className="relative rounded-[32px] overflow-hidden shadow-2xl"
             >
-              <img 
-                src="/Adebukola-Ayeni-Jolayemi.png" 
+              <img
+                src="/Adebukola-Ayeni-Jolayemi.png"
                 alt="Baby Shower Invitation for Adebukola Ayeni Jolayemi"
                 className="w-full h-auto object-cover"
               />
-              
+
               {/* Optional: Decorative border overlay */}
               <div className="absolute inset-0 rounded-[32px] border-2 border-golden-yellow/20 pointer-events-none"></div>
-              
+
               {/* Optional: Top accent bar */}
               <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-forest-green via-golden-yellow to-forest-green"></div>
             </motion.div>
