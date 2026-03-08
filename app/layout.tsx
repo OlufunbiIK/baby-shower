@@ -23,7 +23,7 @@ interface RootLayoutProps {
 export const metadata: Metadata = {
   title: "Baby Shower Celebration - Adebukola Ayeni Jolayemi | March 28, 2026",
   description:
-    "Join us in celebrating the upcoming arrival of our precious little blessing! You're warmly invited to Adebukola's baby shower on Saturday, March 14th, 2026, from 4:00-8:00 PM CTGMT. RSVP today to be part of this joyful celebration! 🎉✨👶",
+    "Join us in celebrating the upcoming arrival of our precious little blessing! You're warmly invited to Adebukola's baby shower on Saturday, March 14th, 2026, from 3:30-7:00 PM CTGMT. RSVP today to be part of this joyful celebration! 🎉✨👶",
 
   keywords: [
     "baby shower",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Baby Shower Celebration 🎉 - Adebukola Ayeni Jolayemi",
     description:
-      "You're warmly invited to celebrate our little blessing! Join us for Adebukola's baby shower on March 14th, 2026, 4:00-8:00 PM CTGMT. Click to RSVP and view event details! 🎉✨👶",
+      "You're warmly invited to celebrate our little blessing! Join us for Adebukola's baby shower on March 14th, 2026, 3:30-7:00 PM CTGMT. Click to RSVP and view event details! 🎉✨👶",
     url: "https://baby-shower-henna.vercel.app",
     siteName: "Baby Shower Invitation",
     images: [
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Baby Shower Celebration 🎉 - Adebukola Ayeni Jolayemi",
     description:
-      "You're invited! Join us for Adebukola's baby shower on March 14th, 2026, 4:00-8:0 PM CTGMT. RSVP today to celebrate our little blessing! 🎉✨👶",
+      "You're invited! Join us for Adebukola's baby shower on March 14th, 2026, 3:30-7:00 PM CTGMT. RSVP today to celebrate our little blessing! 🎉✨👶",
     images: ["https://baby-shower-henna.vercel.app/opengraph-image"], // Full URL
   },
 

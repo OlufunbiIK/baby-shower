@@ -38,7 +38,7 @@ export default function EventDetails() {
     {
       icon: Clock,
       label: "Time",
-      value: "4 PM – 8 PM",
+      value: "3:30 PM – 7:00 PM",
       extra: "CTGMT (Central Time GMT)",
       bgClass: "from-golden-yellow/10 to-amber-100/40",
       borderClass: "hover:border-golden-yellow/40",

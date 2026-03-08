@@ -190,7 +190,7 @@ export default async function Image() {
               ⏰
             </span>
             <span style={{ fontSize: 20, color: "#5a7c65", fontWeight: 500 }}>
-              4 PM - 8 PM
+              3:30 PM - 7 PM
             </span>
           </div>
         </div>

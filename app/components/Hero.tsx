@@ -183,7 +183,7 @@ export default function Hero() {
                 {
                   icon: Clock,
                   label: "Time",
-                  value: "4 PM – 8 PM",
+                  value: "3:30 PM – 7:00 PM",
                   note: "To help us enjoy every moment, we’ll be keeping to time",
                   color: "from-golden-yellow/10 to-amber-100/40",
                 },
